@@ -1,4 +1,4 @@
-const {Logel} = require('../lib');
+const {Logel} = require('logel');
 
 let log = Logel.createBus()
   .setDefaultRenderers()
