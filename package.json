@@ -1,0 +1,38 @@
+{
+  "name": "logel",
+  "version": "0.0.1",
+  "description": "Externally controlled logging subsystem",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "files": [
+    "lib"
+  ],
+  "author": "Yanis Benson",
+  "license": "CC0-1.0",
+  "devDependencies": {
+    "jest": "^24.1.0"
+  },
+  "dependencies": {
+    "chalk": "^2.4.2",
+    "sonic-boom": "^0.7.3",
+    "split2": "^3.1.0"
+  },
+  "directories": {
+    "example": "examples"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stroncium/logel.git"
+  },
+  "keywords": [
+    "log",
+    "logging",
+    "env"
+  ],
+  "bugs": {
+    "url": "https://github.com/stroncium/logel/issues"
+  },
+  "homepage": "https://github.com/stroncium/logel#readme"
+}
