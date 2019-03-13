@@ -1,6 +1,6 @@
 {
   "name": "logel",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Externally controlled logging subsystem",
   "scripts": {
     "test": "jest"
@@ -10,6 +10,7 @@
     "index.d.ts",
     "lib"
   ],
+  "types": "index.d.ts",
   "author": "Yanis Benson",
   "license": "CC0-1.0",
   "devDependencies": {
