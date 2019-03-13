@@ -1,4 +1,4 @@
-const {Logel, Log} = require('../lib');
+const {Logel, Log} = require('../');
 const fs = require('fs');
 const ChildProcess = require('child_process');
 const Url = require('url');
@@ -71,11 +71,11 @@ describe('config', () => {
 describe('methods', () => {
 
   test('log can be created', () => {
-    let log = Logel.createBus().log();
+    let log = Logel.make().log();
     expect(log).toBeInstanceOf(Log);
   });
   test('default renderers can be set', () => {
-    let log = Logel.createBus().setDefaultRenderers().log();
+    let log = Logel.make().setDefaultRenderers().log();
   });
 
   test('invalid outputs', async () => {

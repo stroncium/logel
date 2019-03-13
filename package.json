@@ -1,8 +1,7 @@
 {
   "name": "logel",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Externally controlled logging subsystem",
-  "main": "lib/index.js",
   "scripts": {
     "test": "jest"
   },
@@ -16,8 +15,7 @@
   },
   "dependencies": {
     "chalk": "^2.4.2",
-    "sonic-boom": "^0.7.3",
-    "split2": "^3.1.0"
+    "sonic-boom": "^0.7.3"
   },
   "directories": {
     "example": "examples"

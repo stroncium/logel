@@ -1,6 +1,6 @@
 const {Logel} = require('logel');
 
-let log = Logel.createBus()
+let log = Logel.make()
   .setDefaultRenderers()
   .log();
 

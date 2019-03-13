@@ -15,7 +15,7 @@ describe('log', () => {
     log.info('message');
     log.debug('message');
     log.trace('message');
-    log.tmp('message');
+    log.temp('message');
 
     log.fatal('message', {number:123, string:'abc', bool:true, object:{}});
     log.error('message', {number:123, string:'abc', bool:true, object:{}});
@@ -23,7 +23,7 @@ describe('log', () => {
     log.info('message', {number:123, string:'abc', bool:true, object:{}});
     log.debug('message', {number:123, string:'abc', bool:true, object:{}});
     log.trace('message', {number:123, string:'abc', bool:true, object:{}});
-    log.tmp('message', {number:123, string:'abc', bool:true, object:{}});
+    log.temp('message', {number:123, string:'abc', bool:true, object:{}});
 
     expect(busWrite.mock.calls.length).toBe(14);
   });
@@ -41,7 +41,7 @@ describe('log', () => {
     log.info('message');
     log.debug('message');
     log.trace('message');
-    log.tmp('message');
+    log.temp('message');
 
     log.fatal('message', {number:123, string:'abc', bool:true, object:{}});
     log.error('message', {number:123, string:'abc', bool:true, object:{}});
@@ -49,7 +49,7 @@ describe('log', () => {
     log.info('message', {number:123, string:'abc', bool:true, object:{}});
     log.debug('message', {number:123, string:'abc', bool:true, object:{}});
     log.trace('message', {number:123, string:'abc', bool:true, object:{}});
-    log.tmp('message', {number:123, string:'abc', bool:true, object:{}});
+    log.temp('message', {number:123, string:'abc', bool:true, object:{}});
 
     expect(busWrite.mock.calls.length).toBe(2);
   });
