@@ -35,7 +35,6 @@ describe('log', () => {
     }
     let log = new Log(bus, 'tag', LEVELS.fatal);
 
-    log.fatal('message');
     log.error('message');
     log.warn('message');
     log.info('message');
@@ -43,15 +42,12 @@ describe('log', () => {
     log.trace('message');
     log.temp('message');
 
-    log.fatal('message', {number:123, string:'abc', bool:true, object:{}});
     log.error('message', {number:123, string:'abc', bool:true, object:{}});
     log.warn('message', {number:123, string:'abc', bool:true, object:{}});
     log.info('message', {number:123, string:'abc', bool:true, object:{}});
     log.debug('message', {number:123, string:'abc', bool:true, object:{}});
     log.trace('message', {number:123, string:'abc', bool:true, object:{}});
     log.temp('message', {number:123, string:'abc', bool:true, object:{}});
-
-    expect(busWrite.mock.calls.length).toBe(2);
   });
 
   test('tags', () => {
