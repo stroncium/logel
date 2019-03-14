@@ -1,4 +1,6 @@
 export interface Log{
+  readonly logel:Logel;
+
   trace(message: string, context?:{}): void;
   debug(message: string, context?:{}): void;
   info(message: string, context?:{}): void;
