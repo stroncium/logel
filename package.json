@@ -1,6 +1,6 @@
 {
   "name": "logel",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Externally controlled logging subsystem",
   "scripts": {
     "test": "jest"
