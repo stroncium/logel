@@ -1,5 +1,5 @@
-let rends = require('../lib/std-renderers');
-
+let rends = require('../lib/std-renderers').renderers;
+let utils = require('../lib/std-renderers').utils;
 
 describe('std renderers', () => {
   test('err', () => {
@@ -32,5 +32,34 @@ describe('std renderers', () => {
     expect(err.stack[0]).toMatch(/makeMyTestError/);
     expect(err.causedBy.causedBy).toBe(undefined);
     expect(err.causedBy.stack).toBe(undefined);
+  });
+});
+
+describe('std renderers utils', () => {
+  test('parseStackTrace', () => {
+    expect(utils.parseStackTrace('just a string')).toBe(null);
+
+    let validStackTrace = 'Error: message\n    at repl:1:9\n    at Script.runInThisContext (vm.js:124:20)\n    at REPLServer.defaultEval (repl.js:322:29)';
+
+    expect(utils.parseStackTrace(validStackTrace))
+      .toEqual({
+        '$type': 'Error',
+        message: 'message',
+        stack: [
+          'repl:1:9',
+          'Script.runInThisContext (vm.js:124:20)',
+          'REPLServer.defaultEval (repl.js:322:29)',
+        ],
+      });
+    let weirdStackTrace = 'Error: message\n    repl:1:9\n    hut Script.runInThisContext (vm.js:124:20)';
+    expect(utils.parseStackTrace(weirdStackTrace))
+      .toEqual({
+        '$type': 'Error',
+        message: 'message',
+        stack: [
+          'repl:1:9',
+          'hut Script.runInThisContext (vm.js:124:20)',
+        ],
+      });
   });
 });

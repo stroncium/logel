@@ -1,7 +1,10 @@
 {
   "name": "logel",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "description": "Externally controlled logging subsystem",
+  "bin": {
+    "logel-pretty": "bin/logel-pretty"
+  },
   "scripts": {
     "test": "jest"
   },
@@ -18,7 +21,8 @@
   },
   "dependencies": {
     "chalk": "^2.4.2",
-    "sonic-boom": "^0.7.3"
+    "sonic-boom": "^0.7.3",
+    "split2": "^3.1.0"
   },
   "directories": {
     "example": "examples"

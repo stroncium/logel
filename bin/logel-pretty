@@ -1,0 +1,27 @@
+#!/usr/bin/env node
+const split = require('split2');
+const { Transform } = require('stream');
+
+const PrettyFormatter = require('logel/lib/output/formatter/pretty');
+
+let formatter = new PrettyFormatter({params:{color:'auto'}});
+
+function prettyTransform(chunk, enc, cb){
+  let line = chunk.toString(enc);
+  let result;
+  let json;
+  try{
+    json = JSON.parse(line);
+    if(typeof json.t !== 'number' || typeof json.l !== 'number' || typeof json.m !== 'string') throw 'incorrect json';
+  }catch(err){
+    cb(null, 'UNKNOWN: '+line);
+    return;
+  }
+  cb(null, formatter.format(json.t, json.l, json.g, json.m, json.c));
+}
+
+process.stdin
+  .pipe(split())
+  .pipe(new Transform({objectMode:true, transform:prettyTransform}))
+  .pipe(process.stdout)
+  .on('error', err => {throw err;})

@@ -80,7 +80,7 @@ describe('methods', () => {
 
   test('invalid outputs', async () => {
     let pipe = await createTestWritePipe();
-    let bus = new Logel({
+    let bus = new Logel().configure({
       outputs: ['std://'+pipe.fd, 'nonexistant://path', 'qwe', 'std://qwe'],
       fallback: null,
       level: 'trace',
@@ -96,7 +96,7 @@ describe('methods', () => {
   });
 
   test('root tag', () => {
-    let log = new Logel({
+    let log = new Logel().configure({
       outputs: [],
       fallback: null,
       level: 'trace',

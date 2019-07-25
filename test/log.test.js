@@ -3,11 +3,11 @@ let LEVELS = require('../lib/levels');
 
 describe('log', () => {
   test('all logging methods work', () => {
-    let busWrite = jest.fn(() => {});
-    let bus = {
-      write: busWrite,
+    let logelWrite = jest.fn(() => {});
+    let logel = {
+      write: logelWrite,
     }
-    let log = new Log(bus, 'tag', LEVELS.trace);
+    let log = new Log(logel, 'tag', LEVELS.trace);
 
     log.fatal('message');
     log.error('message');
@@ -25,15 +25,15 @@ describe('log', () => {
     log.trace('message', {number:123, string:'abc', bool:true, object:{}});
     log.temp('message', {number:123, string:'abc', bool:true, object:{}});
 
-    expect(busWrite.mock.calls.length).toBe(14);
+    expect(logelWrite.mock.calls.length).toBe(14);
   });
 
   test('all disabled logging methods work', () => {
-    let busWrite = jest.fn(() => {});
-    let bus = {
-      write: busWrite,
+    let logelWrite = jest.fn(() => {});
+    let logel = {
+      write: logelWrite,
     }
-    let log = new Log(bus, 'tag', LEVELS.fatal);
+    let log = new Log(logel, 'tag', LEVELS.warn);
 
     log.error('message');
     log.warn('message');
@@ -48,6 +48,8 @@ describe('log', () => {
     log.debug('message', {number:123, string:'abc', bool:true, object:{}});
     log.trace('message', {number:123, string:'abc', bool:true, object:{}});
     log.temp('message', {number:123, string:'abc', bool:true, object:{}});
+
+    // for(let call of logelWrite.mock.calls.length)
   });
 
   test('tags', () => {
