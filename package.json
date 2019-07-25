@@ -1,6 +1,6 @@
 {
   "name": "logel",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Externally controlled logging subsystem",
   "bin": {
     "logel-pretty": "bin/logel-pretty"
@@ -11,7 +11,8 @@
   "files": [
     "index.js",
     "index.d.ts",
-    "lib"
+    "lib",
+    "bin"
   ],
   "types": "index.d.ts",
   "author": "Yanis Benson",
