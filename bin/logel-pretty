@@ -1,24 +1,61 @@
 #!/usr/bin/env node
 const split = require('split2');
 const { Transform } = require('stream');
-
-const PrettyFormatter = require('logel/lib/output/formatter/pretty');
+const PrettyFormatter = require('../lib/output/formatter/pretty');
+let chalk;
 
 let formatter = new PrettyFormatter({params:{color:'auto'}});
+if(formatter.color) {
+  chalk = require('chalk');
+}
 
-function prettyTransform(chunk, enc, cb){
+const parseLogelLine = line => {
+  let json = JSON.parse(line);
+  if(typeof json.t !== 'number' || typeof json.l !== 'number' || typeof json.m !== 'string') throw new Error('incorrect json');
+  return json;
+};
+
+const parseDockerComposeLogelLine = line => {
+  let idx = line.indexOf('|');
+  let jsonSrc = line.substr(idx+1);
+  let source = line.substr(0, idx).trim();
+  let json = parseLogelLine(jsonSrc);
+  if (json.g === undefined) {
+    json.g = source;
+  } else {
+    json.g = source + '.' + json.g;
+  }
+  return json;
+};
+
+let parseLine = parseLogelLine;
+
+if(process.env.LOGEL_PRETTY_HACK !== undefined){
+  for(let hack of process.env.LOGEL_PRETTY_HACK.split(',')){
+    hack = hack.trim();
+    switch(hack) {
+      case 'docker-compose':
+        parseLine = parseDockerComposeLogelLine;
+        break;
+      default:
+        throw new Error(`unknown hack: ${hack}`);
+    }
+  }
+}
+
+
+const prettyTransform = (chunk, enc, cb) => {
   let line = chunk.toString(enc);
-  let result;
+
   let json;
-  try{
-    json = JSON.parse(line);
-    if(typeof json.t !== 'number' || typeof json.l !== 'number' || typeof json.m !== 'string') throw 'incorrect json';
-  }catch(err){
-    cb(null, 'UNKNOWN: '+line);
+  try {
+    json = parseLine(line);
+  } catch(err) {
+    cb(null, line + '\n');
     return;
   }
   cb(null, formatter.format(json.t, json.l, json.g, json.m, json.c));
-}
+};
 
 process.stdin
   .pipe(split())
