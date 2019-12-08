@@ -52,7 +52,7 @@ describe('pretty formatter', () => {
     expect(JSON.stringify(formatter.format(time, 1, null, 'msg'))).toBe("\"2019-03-12 10:02:19.508 DEBUG msg\\n\"");
     expect(JSON.stringify(formatter.format(time, 2, null, 'msg'))).toBe("\"2019-03-12 10:02:19.508 INFO  msg\\n\"");
     expect(JSON.stringify(formatter.format(time, 3, null, 'msg'))).toBe("\"\\u001b[31m2019-03-12 10:02:19.508 WARN  msg\\u001b[39m\\n\"");
-    expect(JSON.stringify(formatter.format(time, 4, null, 'msg'))).toBe("\"\\u001b[31m2019-03-12 10:02:19.508 \\u001b[30m\\u001b[41mERROR\\u001b[49m\\u001b[31m msg\\u001b[39m\\n\"");
+    expect(JSON.stringify(formatter.format(time, 4, null, 'msg'))).toBe("\"\\u001b[31m2019-03-12 10:02:19.508 \\u001b[30m\\u001b[41mERROR\\u001b[49m\\u001b[39m\\u001b[31m msg\\u001b[39m\\n\"");
     expect(JSON.stringify(formatter.format(time, 5, null, 'msg'))).toBe("\"\\u001b[30m\\u001b[41m2019-03-12 10:02:19.508 FATAL msg\\u001b[49m\\u001b[39m\\n\"");
   });
   test('no-color tagged', () => {
