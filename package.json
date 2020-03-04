@@ -1,12 +1,12 @@
 {
   "name": "logel",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Externally controlled logging subsystem",
   "bin": {
     "logel-pretty": "bin/logel-pretty"
   },
   "scripts": {
-    "test": "jest"
+    "test": "ava"
   },
   "files": [
     "index.js",
@@ -18,7 +18,7 @@
   "author": "Yanis Benson",
   "license": "CC0-1.0",
   "devDependencies": {
-    "jest": "^24.1.0"
+    "ava": "^3.5.0"
   },
   "dependencies": {
     "chalk": "^3.0.0",
