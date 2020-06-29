@@ -89,9 +89,10 @@ test('invalid outputs produce errors', async t => {
   let lastLine = lines.pop();
   t.is(lastLine, '');
   t.is(lines.length, 3);
-  t.regex(lines[0], /^\{"t":[0-9]+,"l":4,"g":"logel","m":"output initialization","c":\{"src":"nonexistant:\/\/path","err":\{\}\}\}$/);
-  t.regex(lines[1], /^\{"t":[0-9]+,"l":4,"g":"logel","m":"output initialization","c":\{"src":"qwe","err":\{\}\}\}$/);
-  t.regex(lines[2], /^\{"t":[0-9]+,"l":4,"g":"logel","m":"output initialization","c":\{"src":"std:\/\/qwe","err":\{\}\}\}$/);
+  t.log(lines[0]);
+  t.regex(lines[0], /^\{"\$time":[0-9]+,"\$level":"error","\$tag":"logel","\$message":"output initialization","src":"nonexistant:\/\/path","err":\{\}\}$/);
+  t.regex(lines[1], /^\{"\$time":[0-9]+,"\$level":"error","\$tag":"logel","\$message":"output initialization","src":"qwe","err":\{\}\}$/);
+  t.regex(lines[2], /^\{"\$time":[0-9]+,"\$level":"error","\$tag":"logel","\$message":"output initialization","src":"std:\/\/qwe","err":\{\}\}$/);
 });
 
 test('root tag works', t => {

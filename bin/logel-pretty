@@ -2,6 +2,8 @@
 const split = require('split2');
 const { Transform } = require('stream');
 const PrettyFormatter = require('../lib/output/formatter/pretty');
+const { parseDockerComposeLine } = require('../lib/parser/docker-compose');
+const { parseLogelV03V04Line } = require('../lib/parser/logel-v03-v04');
 let chalk;
 
 let formatter = new PrettyFormatter({params:{color:'auto'}});
@@ -15,50 +17,75 @@ const parseLogelLine = line => {
   return json;
 };
 
-const parseDockerComposeLogelLine = line => {
-  let idx = line.indexOf('|');
-  let jsonSrc = line.substr(idx+1);
-  let source = line.substr(0, idx).trim();
-  let json = parseLogelLine(jsonSrc);
-  if (json.g === undefined) {
-    json.g = source;
-  } else {
-    json.g = source + '.' + json.g;
+let logelParsers = [
+  parseLogelV03V04Line,
+];
+
+const dockerComposePreparser = parser => line => {
+  let result = parser(line);
+  if (result !== undefined) {
+    return result;
   }
-  return json;
+  let dcData = parseDockerComposeLine(line);
+  if (dcData === undefined) {
+    return undefined;
+  }
+  let result = parser(dcData.line);
+  if (result.context === undefined) {
+    result.context = {'$dockerCompose source': dcData.source};
+  } else {
+    result.context['$dockerCompose source'] = dcData.source;
+  }
+
+  return result;
 };
 
-let parseLine = parseLogelLine;
+let preparsers = [
+  dockerComposePreparser,
+];
 
-if(process.env.LOGEL_PRETTY_HACK !== undefined){
-  for(let hack of process.env.LOGEL_PRETTY_HACK.split(',')){
-    hack = hack.trim();
-    switch(hack) {
-      case 'docker-compose':
-        parseLine = parseDockerComposeLogelLine;
-        break;
-      default:
-        throw new Error(`unknown hack: ${hack}`);
-    }
+let allParsers = [];
+
+for(let parser of logelParsers) {
+  allParsers.push(parser);
+  for(let preparser of preparsers) {
+    allParsers.push(preparser(parser));
   }
 }
 
+let usedParsers = [];
+let lastParser = allParsers[0];
 
 const prettyTransform = (chunk, enc, cb) => {
   let line = chunk.toString(enc);
 
-  let json;
-  try {
-    json = parseLine(line);
-  } catch(err) {
-    cb(null, line + '\n');
-    return;
+  let parsed = lastParser(line);
+  if (parsed === undefined) {
+    for(lastParser of usedParsers) {
+      parsed = lastParser(line);
+      if (parsed !== undefined) {
+        break;
+      }
+    }
+    if (parsed === undefined) {
+      for(lastParser of allParsers) {
+        parsed = lastParser(line);
+        if (parsed !== undefined) {
+          usedParsers.push(lastParser);
+          break;
+        }
+      }
+    }
   }
-  cb(null, formatter.format(json.t, json.l, json.g, json.m, json.c));
+
+  let output = (parsed === undefined) ? `??? ${line}\n` : formatter.format(parsed.time, parsed.level, parsed.tag, parsed.message, parsed.context);
+  cb(null, output);
 };
 
 process.stdin
   .pipe(split())
-  .pipe(new Transform({objectMode:true, transform:prettyTransform}))
+  .pipe(new Transform({objectMode: true, transform: prettyTransform}))
   .pipe(process.stdout)
-  .on('error', err => {throw err;})
+  .on('error', err => {
+    throw err;
+  })

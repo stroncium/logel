@@ -1,6 +1,6 @@
 {
   "name": "logel",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Externally controlled logging subsystem",
   "bin": {
     "logel-pretty": "bin/logel-pretty"
