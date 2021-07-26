@@ -31,6 +31,9 @@ const dockerComposePreparser = parser => line => {
     return undefined;
   }
   result = parser(dcData.line);
+  if (result === undefined) {
+    return undefined;
+  }
   if (result.context === undefined) {
     result.context = {'$dockerCompose source': dcData.source};
   } else {
