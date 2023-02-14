@@ -1,8 +1,11 @@
 const test = require('ava');
 
-let renderers = require('../lib/std-renderers').renderers;
-let utils = require('../lib/std-renderers').utils;
+const {
+	renderers,
+	utils,
+} = require('../lib/default-renderers');
 
+const renderErr = renderers.get(Error);
 class MyTestError extends Error{}
 
 function makeError(message){
@@ -15,17 +18,10 @@ function makeError(message){
 	return err;
 }
 
-test('err - non matching', t => {
-	let string = 'string';
-	let obj = {};
-	t.is(renderers.err(string), string);
-	t.is(renderers.err(obj), obj);
-});
-
 test('err - error', t => {
 	let err = makeError('my message');
 
-	let rendered = renderers.err(err);
+	let rendered = renderErr(err);
 	t.deepEqual({...rendered, stack: undefined}, {
 		$type: 'MyTestError',
 		message: 'my message',

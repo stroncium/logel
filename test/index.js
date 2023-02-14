@@ -72,7 +72,7 @@ test('log can be created', t => {
 
 test('default renderers can be set', t => {
   t.notThrows(() => {
-    Logel.make().setDefaultRenderers().log();
+    Logel.make(Symbol('test')).setDefaultRenderers().log();
   });
 });
 
@@ -89,7 +89,7 @@ test('invalid outputs produce errors', async t => {
   let lastLine = lines.pop();
   t.is(lastLine, '');
   t.is(lines.length, 3);
-  t.log(lines[0]);
+  // t.log(lines[0]);
   t.regex(lines[0], /^\{"\$time":[0-9]+,"\$level":"error","\$tag":"logel","\$message":"output initialization","src":"nonexistant:\/\/path","err":\{\}\}$/);
   t.regex(lines[1], /^\{"\$time":[0-9]+,"\$level":"error","\$tag":"logel","\$message":"output initialization","src":"qwe","err":\{\}\}$/);
   t.regex(lines[2], /^\{"\$time":[0-9]+,"\$level":"error","\$tag":"logel","\$message":"output initialization","src":"std:\/\/qwe","err":\{\}\}$/);

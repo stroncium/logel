@@ -1,3 +1,6 @@
+// import { LOGEL_RENDER } from ".";
+// import { renderRootObject } from ".";
+
 export interface Log{
   readonly logel:Logel;
 
@@ -12,15 +15,24 @@ export interface Log{
   tagged(tag: string): Log;
 }
 
-type Renderer = (data: any) => any;
+interface Context {
+  seen: Set<unknown>;
+  sym: Symbol;
+}
 
-export class Logel{
+type Renderer = (data: unknown, ctx: Context) => unknown;
+
+export class Logel {
   static make(): Logel;
 
-  setRenderers(rends: {[key: string]: Renderer }): Logel;
   setDefaultRenderers(): Logel;
 
   log(): Log;
 
   close(): Promise<void>;
 }
+
+export const setLogelRender: <T>(v: unknown, sym: Symbol, fn: (v:T, ctx: Context) => unknown) => unknown;
+export const renderRootObject: (v: unknown, sym: Symbol) => unknown;
+export const LOGEL_RENDER: Symbol;
+export const LOGEL_FINAL: Symbol;

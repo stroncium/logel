@@ -1,6 +1,6 @@
 {
   "name": "logel",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Externally controlled logging subsystem",
   "bin": {
     "logel-pretty": "bin/logel-pretty"
@@ -18,7 +18,7 @@
   "author": "Yanis Benson",
   "license": "CC0-1.0",
   "devDependencies": {
-    "ava": "^3.5.0",
+    "ava": "^5.2.0",
     "c8": "^7.7.3"
   },
   "dependencies": {
