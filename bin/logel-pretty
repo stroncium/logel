@@ -1,94 +1,98 @@
 #!/usr/bin/env node
-const split = require('split2');
-const { Transform } = require('stream');
-const PrettyFormatter = require('../lib/output/formatter/pretty');
-const { parseDockerComposeLine } = require('../lib/parser/docker-compose');
-const { parseLogelV03V04Line } = require('../lib/parser/logel-v03-v04');
-let chalk;
+import { Transform } from 'node:stream';
+import split from 'split2';
+import { parseDockerComposeLine } from '../lib/parser/docker-compose.js';
+import { COLOR_STYLES, prettyPrintLine } from '../lib/pretty-print.js';
 
-let formatter = new PrettyFormatter({params:{color:'auto'}});
-if(formatter.color) {
-  chalk = require('chalk');
-}
-
-const parseLogelLine = line => {
-  let json = JSON.parse(line);
-  if(typeof json.t !== 'number' || typeof json.l !== 'number' || typeof json.m !== 'string') throw new Error('incorrect json');
-  return json;
+const parseLogelLine = (line) => {
+	try {
+		let json = JSON.parse(line);
+		if (
+			typeof json.$t !== 'number' ||
+			typeof json.$l !== 'string' ||
+			typeof json.$m !== 'string'
+		) {
+			return undefined;
+		}
+		return json;
+	} catch (_) {
+		return undefined;
+	}
 };
 
 let logelParsers = [
-  parseLogelV03V04Line,
+	parseLogelLine,
+	// parseLogelV03V04Line,
 ];
 
-const dockerComposePreparser = parser => line => {
-  let result = parser(line);
-  if (result !== undefined) {
-    return result;
-  }
-  let dcData = parseDockerComposeLine(line);
-  if (dcData === undefined) {
-    return undefined;
-  }
-  result = parser(dcData.line);
-  if (result === undefined) {
-    return undefined;
-  }
-  if (result.context === undefined) {
-    result.context = {'$dockerCompose source': dcData.source};
-  } else {
-    result.context['$dockerCompose source'] = dcData.source;
-  }
-
-  return result;
+const dockerComposePreparser = (parser) => (line) => {
+	let result = parser(line);
+	if (result !== undefined) {
+		return result;
+	}
+	let dcData = parseDockerComposeLine(line);
+	if (dcData === undefined) {
+		return undefined;
+	}
+	result = parser(dcData.line);
+	if (result === undefined) {
+		return undefined;
+	}
+	if (result.context === undefined) {
+		result.context = { '$dockerCompose source': dcData.source };
+	} else {
+		result.context['$dockerCompose source'] = dcData.source;
+	}
+	return result;
 };
 
-let preparsers = [
-  dockerComposePreparser,
-];
+let preparsers = [dockerComposePreparser];
 
 let allParsers = [];
 
-for(let parser of logelParsers) {
-  allParsers.push(parser);
-  for(let preparser of preparsers) {
-    allParsers.push(preparser(parser));
-  }
+for (let parser of logelParsers) {
+	allParsers.push(parser);
+	for (let preparser of preparsers) {
+		allParsers.push(preparser(parser));
+	}
 }
 
 let usedParsers = [];
 let lastParser = allParsers[0];
 
 const prettyTransform = (chunk, enc, cb) => {
-  let line = chunk.toString(enc);
+	let line = chunk.toString(enc);
 
-  let parsed = lastParser(line);
-  if (parsed === undefined) {
-    for(lastParser of usedParsers) {
-      parsed = lastParser(line);
-      if (parsed !== undefined) {
-        break;
-      }
-    }
-    if (parsed === undefined) {
-      for(lastParser of allParsers) {
-        parsed = lastParser(line);
-        if (parsed !== undefined) {
-          usedParsers.push(lastParser);
-          break;
-        }
-      }
-    }
-  }
+	let p = lastParser(line);
+	if (p === undefined) {
+		for (lastParser of usedParsers) {
+			p = lastParser(line);
+			if (p !== undefined) {
+				break;
+			}
+		}
+		if (p === undefined) {
+			for (lastParser of allParsers) {
+				p = lastParser(line);
+				if (p !== undefined) {
+					usedParsers.push(lastParser);
+					break;
+				}
+			}
+		}
+	}
 
-  let output = (parsed === undefined) ? `??? ${line}\n` : formatter.format(parsed.time, parsed.level, parsed.tag, parsed.message, parsed.context);
-  cb(null, output);
+	let output =
+		p === undefined
+			? `??? ${line}\n`
+			: prettyPrintLine(p.$t, p.$l, p.$tag, p.$m, p.$d, COLOR_STYLES);
+	cb(null, output);
 };
 
 process.stdin
-  .pipe(split())
-  .pipe(new Transform({objectMode: true, transform: prettyTransform}))
-  .pipe(process.stdout)
-  .on('error', err => {
-    throw err;
-  })
+	.pipe(split())
+	.pipe(new Transform({ objectMode: true, transform: prettyTransform }))
+	.pipe(process.stdout)
+	.on('error', (err) => {
+		throw err;
+	});
